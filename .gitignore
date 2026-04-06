@@ -1,0 +1,14 @@
+# 라이브러리 (가장 중요)
+node_modules/
+
+# 빌드 결과물
+dist/
+build/
+
+# 환경 변수 (보안)
+.env
+*.local
+
+# 운영체제 관련
+.DS_Store
+Thumbs.db
