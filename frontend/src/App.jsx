@@ -4,7 +4,9 @@ import axios from 'axios';
 function App() {
   const [myList, setMyList] = useState([]);
   const [text, setText] = useState('');
-const url = 'https://todo-app-mini-project-20213142.vercel.app/_/backend/api/todos';
+const url = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api/todos' 
+  : '/_/backend/api/todos';
 
   function loadData() {
     axios.get(url)
