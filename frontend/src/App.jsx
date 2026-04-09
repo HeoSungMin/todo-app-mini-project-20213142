@@ -40,7 +40,6 @@ function App() {
     loadData();
   };
 
-  // --- 디자인 수정 부분 (Tailwind CSS 적용) ---
   return (
     <div className="bg-slate-200 min-h-screen p-10"> {/* 전체 배경색과 패딩 */}
       <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg"> {/* 카드 컨테이너 */}
