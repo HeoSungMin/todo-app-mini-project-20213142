@@ -6,9 +6,9 @@ function App() {
   const [input, setInput] = useState('');
 
   // 1. 환경에 따른 API 주소 자동 설정 (로컬 vs Vercel)
-  const url = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api/todos' 
-    : '/_/backend/api/todos';
+const url = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api/todos' 
+  : '/api/todos'; // Vercel이 위 rewrites 설정을 보고 알아서 /backend/api/todos로 보내줍니다.
 
   // 2. 데이터 불러오기 함수
   const fetchTodos = async () => {
