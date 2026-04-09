@@ -7,7 +7,7 @@ function App() {
 
 const url = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000/api/todos' 
-  : '/api/todos'; // 반드시 이렇게 수정!
+  : '/api/todos';
 
   // 2. 데이터 불러오기 함수
   const fetchTodos = async () => {
