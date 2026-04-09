@@ -6,9 +6,9 @@ function App() {
   const [input, setInput] = useState('');
 
   // Vercel 배포 환경을 고려한 API 주소 (상대 경로 사용)
-  const apiUrl = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api/todos' 
-    : '/api/todos';
+ const apiUrl = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api/todos' 
+  : '/api/todos';
 
   // 1. 목록 불러오기 (GET)
   const fetchTodos = async () => {
