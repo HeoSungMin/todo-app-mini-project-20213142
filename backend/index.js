@@ -40,9 +40,9 @@ app.delete('/api/todos/:id', async (req, res) => {
   res.json({ message: '삭제 완료' });
 });
 
-module.exports = app;
-
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`서버 실행 중: ${PORT}`));
 }
+
+module.exports = app;
