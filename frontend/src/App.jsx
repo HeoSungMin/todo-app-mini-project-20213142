@@ -4,7 +4,7 @@ import axios from 'axios';
 function App() {
   const [myList, setMyList] = useState([]);
   const [text, setText] = useState('');
-  const url = 'http://localhost:5000/api/todos';
+const url = '//_/backend/api/todos';
 
   function loadData() {
     axios.get(url)
