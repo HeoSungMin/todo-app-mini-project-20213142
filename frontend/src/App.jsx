@@ -1,92 +1,83 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import './App.css';
 
 function App() {
-  const [myList, setMyList] = useState([]);
-  const [text, setText] = useState('');
-const url = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api/todos' 
-  : '/_/backend/api/todos';
+  const [todos, setTodos] = useState([]); // 초기값은 반드시 빈 배열 []
+  const [input, setInput] = useState('');
 
-  function loadData() {
-    axios.get(url)
-      .then((response) => {
-        setMyList(response.data);
-      })
-      .catch((error) => {
-        alert("연결 실패!");
-      });
-  }
+  // 1. 환경에 따른 API 주소 자동 설정 (로컬 vs Vercel)
+  const url = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api/todos' 
+    : '/_/backend/api/todos';
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const handleAdd = async (event) => {
-    event.preventDefault();
-    if (text === "") return;
-    await axios.post(url, { title: text });
-    setText("");
-    loadData();
-  };
-
-  const handleDelete = async (targetId) => {
-    if (window.confirm("진짜 지울까요?")) {
-      await axios.delete(url + "/" + targetId);
-      loadData();
+  // 2. 데이터 불러오기 함수
+  const fetchTodos = async () => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      // [핵심] 서버 응답이 배열인지 확인 후 저장 (에러 방지)
+      if (Array.isArray(data)) {
+        setTodos(data);
+      } else {
+        console.error("데이터 형식이 배열이 아닙니다:", data);
+        setTodos([]); // 형식이 틀리면 빈 배열로 초기화하여 에러 방지
+      }
+    } catch (err) {
+      console.error("서버 연결 실패:", err);
+      alert("서버와 연결할 수 없습니다!");
     }
   };
 
-  const handleCheck = async (targetId, currentStatus) => {
-    await axios.put(url + "/" + targetId, { completed: !currentStatus });
-    loadData();
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  // 3. 할 일 추가 함수
+  const addTodo = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: input }),
+      });
+      
+      if (response.ok) {
+        setInput('');
+        fetchTodos(); // 추가 후 목록 새로고침
+      }
+    } catch (err) {
+      console.error("추가 실패:", err);
+    }
   };
 
   return (
-    <div className="bg-slate-200 min-h-screen p-10"> {/* 전체 배경색과 패딩 */}
-      <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg"> {/* 카드 컨테이너 */}
-        <h1 className="text-2xl font-bold text-center text-indigo-600 mb-6">나의 과제 투두리스트</h1>
-        
-        <form onSubmit={handleAdd} className="flex gap-2 mb-6">
-          <input
-            type="text"
-            className="flex-1 p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="여기에 적어주세요"
-          />
-          <button 
-            type="submit" 
-            className="bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            입력
-          </button>
-        </form>
+    <div className="App">
+      <h1>나의 과제 투두리스트</h1>
+      <form onSubmit={addTodo}>
+        <input 
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+          placeholder="할 일을 입력하세요"
+        />
+        <button type="submit">입력</button>
+      </form>
 
-        <ul className="space-y-3">
-          {myList.map((item) => (
-            <li key={item._id} className="flex justify-between items-center p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 accent-indigo-600"
-                  checked={item.completed}
-                  onChange={() => handleCheck(item._id, item.completed)}
-                />
-                <span className={`text-lg ${item.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>
-                  {item.title}
-                </span>
-              </div>
-              <button 
-                onClick={() => handleDelete(item._id)} 
-                className="text-red-500 hover:text-red-700 font-medium"
-              >
-                삭제
-              </button>
+      <ul>
+        {/* [핵심] 안전하게 데이터 렌더링 */}
+        {Array.isArray(todos) && todos.length > 0 ? (
+          todos.map((todo) => (
+            <li key={todo._id || todo.id}>
+              {todo.title}
             </li>
-          ))}
-        </ul>
-      </div>
+          ))
+        ) : (
+          <p>할 일이 없거나 데이터를 불러오는 중입니다...</p>
+        )}
+      </ul>
     </div>
   );
 }
