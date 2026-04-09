@@ -1,3 +1,6 @@
+// backend/index.js 맨 윗줄
+console.log("Vercel 백엔드 함수 깨어남!");
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
